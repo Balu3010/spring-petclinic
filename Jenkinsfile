@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        CONTAINER_NAME = "spring-petclinic"
-        IMAGE_NAME = "balubojja/spring-petclinic"
+        CONTAINER_NAME = "balubojja/spring-petclinic"
+        IMAGE_NAME = "spring-petclinic"
         TAG = "latest"
         EMAIL = "devops.balu3010@gmail.com"
         PORT = "8080"
