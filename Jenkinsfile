@@ -60,7 +60,7 @@ pipeline {
 
         stage('Send Email Notification') {
             steps {
-                emailext(
+                emailtext(
                     subject: "✅ Spring Petclinic Deployed Successfully!",
                     body: """
                     Hello Team 👋,
@@ -76,7 +76,7 @@ pipeline {
 
     post {
         failure {
-            emailext(
+            emailtext(
                 subject: "❌ Spring Petclinic Deployment Failed!",
                 body: """
                 Hello,
