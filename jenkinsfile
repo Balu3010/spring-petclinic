@@ -7,7 +7,7 @@ pipeline {
         TAG = "latest"
         EMAIL = "devops.balu3010@gmail.com"
         PORT = "8080"
-        EC2_IP = "3.95.175.97"
+        EC2_IP = "54.196.201.144"
     }
 
     stages {
