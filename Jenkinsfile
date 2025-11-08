@@ -2,24 +2,16 @@ pipeline {
     agent any
 
     environment {
-        CONTAINER_NAME = "balubojja/spring-petclinic"
-        IMAGE_NAME = "spring-petclinic"
-        TAG = "latest"
-        EMAIL = "devops.balu3010@gmail.com"
-        PORT = "8080"
+        IMAGE_NAME = "balubojja/spring-petclinic"
         EC2_IP = "18.205.245.129"
+        PORT = "8080"
+        TAG = "latest"
     }
 
     stages {
         stage('Clone Repository') {
             steps {
                 git branch: 'main', url: 'https://github.com/Balu3010/spring-petclinic.git'
-            }
-        }
-
-        stage('Build JAR using Maven') {
-            steps {
-                sh 'mvn clean package -DskipTests'
             }
         }
 
@@ -31,7 +23,11 @@ pipeline {
 
         stage('Login to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
             }
@@ -42,7 +38,7 @@ pipeline {
                 sh 'docker push $IMAGE_NAME:$TAG'
             }
         }
-
+        
         stage('Deploy on EC2 Instance') {
             steps {
                 sshagent(['ec2-ssh-key']) {
@@ -57,35 +53,14 @@ pipeline {
                 }
             }
         }
-
-        stage('Send Email Notification') {
-            steps {
-                emailtext(
-                    subject: "✅ Spring Petclinic Deployed Successfully!",
-                    body: """
-                    Hello Team 👋,
-                    \nYour Spring Petclinic app has been successfully deployed on EC2!
-                    \n🌍 URL: http://${EC2_IP}:${PORT}/
-                    \n🐳 Docker Image: ${IMAGE_NAME}:${TAG}
-                    """,
-                    to: "${devops.balu3010@gmail.com}"
-                )
-            }
-        }
-    }
+    }    
 
     post {
+        success {
+            echo "✅ Docker image successfully built and pushed to Docker Hub!"
+        }
         failure {
-            emailtext(
-                subject: "❌ Spring Petclinic Deployment Failed!",
-                body: """
-                Hello,
-                \nDeployment failed for Spring Petclinic.
-                \nPlease check Jenkins logs for error details.
-                """,
-                to: "${devops.balu3010@gmail.com}"
-            )
+            echo "❌ Build or push failed. Check Jenkins logs for details."
         }
     }
 }
-
