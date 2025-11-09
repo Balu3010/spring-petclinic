@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "balubojja/spring-petclinic"
         CONTAINER_NAME = "spring-petclinic"
-        EC2_IP = "3.83.233.186"
+        EC2_IP = "13.236.209.38"
         PORT = "8080"
         TAG = "dev23"
     }
