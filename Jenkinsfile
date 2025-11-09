@@ -3,9 +3,10 @@ pipeline {
 
     environment {
         IMAGE_NAME = "balubojja/spring-petclinic"
+        CONTAINER_NAME = "spring-petclinic"
         EC2_IP = "18.205.245.129"
         PORT = "8080"
-        TAG = "latest"
+        TAG = "dev23"
     }
 
     stages {
@@ -42,14 +43,15 @@ pipeline {
         stage('Deploy on EC2 Instance') {
             steps {
                 sshagent(['ec2-ssh-key']) {
-                    sh '''
+                    sh ''
                         ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP '
-                            docker pull $IMAGE_NAME:$TAG &&
+                            docker pull $IMAGE_NAME:$TAG || true &&
+                            docker build --pull -t $IMAGE_NAME:$TAG 
                             docker stop $CONTAINER_NAME || true &&
                             docker rm $CONTAINER_NAME || true &&
                             docker run -d -p ${PORT}:${PORT} --name $CONTAINER_NAME $IMAGE_NAME:$TAG
                         '
-                    '''
+                    ''
                 }
             }
         }
