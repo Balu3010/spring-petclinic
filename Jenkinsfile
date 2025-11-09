@@ -43,15 +43,14 @@ pipeline {
         stage('Deploy on EC2 Instance') {
             steps {
                 sshagent(['ec2-ssh-key']) {
-                    sh ''
-                        ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP '
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP "
                             docker pull $IMAGE_NAME:$TAG || true &&
-                            docker build --pull -t $IMAGE_NAME:$TAG 
                             docker stop $CONTAINER_NAME || true &&
                             docker rm $CONTAINER_NAME || true &&
                             docker run -d -p ${PORT}:${PORT} --name $CONTAINER_NAME $IMAGE_NAME:$TAG
-                        '
-                    ''
+                        "
+                    '''
                 }
             }
         }
@@ -59,10 +58,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Docker image successfully built and pushed to Docker Hub!"
+            echo "✅ Docker image successfully built, pushed to Docker Hub, and deployed to EC2!"
         }
         failure {
-            echo "❌ Build or push failed. Check Jenkins logs for details."
+            echo "❌ Build, push, or deploy failed. Check Jenkins logs for details."
         }
     }
 }
