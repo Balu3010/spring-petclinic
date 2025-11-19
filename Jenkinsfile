@@ -6,7 +6,7 @@ pipeline {
         IMAGE_NAME = "balubojja/spring-petclinic"
         TAG = "latest"
         PORT = "8080"
-        EC2_IP = "3.27.62.155"
+        EC2_IP = "16.176.194.233"
     }
 
     stages {
