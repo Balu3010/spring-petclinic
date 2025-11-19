@@ -5,7 +5,6 @@ pipeline {
         CONTAINER_NAME = "spring-petclinic"
         IMAGE_NAME = "balubojja/spring-petclinic"
         TAG = "latest"
-        EMAIL = "devops.balu3010@gmail.com"
         PORT = "8080"
         EC2_IP = "3.27.62.155"
     }
@@ -56,35 +55,6 @@ pipeline {
                     '''
                 }
             }
-        }
-
-        stage('Send Email Notification') {
-            steps {
-                emailtext(
-                    subject: "✅ Spring Petclinic Deployed Successfully!",
-                    body: """
-                    Hello Team 👋,
-                    \nYour Spring Petclinic app has been successfully deployed on EC2!
-                    \n🌍 URL: http://${EC2_IP}:${PORT}/
-                    \n🐳 Docker Image: ${IMAGE_NAME}:${TAG}
-                    """,
-                    to: "${devops.balu3010@gmail.com}"
-                )
-            }
-        }
-    }
-
-    post {
-        failure {
-            emailtext(
-                subject: "❌ Spring Petclinic Deployment Failed!",
-                body: """
-                Hello,
-                \nDeployment failed for Spring Petclinic.
-                \nPlease check Jenkins logs for error details.
-                """,
-                to: "${devops.balu3010@gmail.com}"
-            )
         }
     }
 }
