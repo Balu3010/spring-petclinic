@@ -10,6 +10,7 @@ pipeline {
     }
 
     stages {
+
         stage('Clone Repository') {
             steps {
                 git branch: 'main', url: 'https://github.com/Balu3010/spring-petclinic.git'
@@ -45,14 +46,14 @@ pipeline {
         stage('Deploy on EC2 Instance') {
             steps {
                 sshagent(['ec2-ssh-key']) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP '
-                            docker pull $IMAGE_NAME:$TAG &&
-                            docker stop $CONTAINER_NAME || true &&
-                            docker rm $CONTAINER_NAME || true &&
-                            docker run -d -p ${PORT}:${PORT} --name $CONTAINER_NAME $IMAGE_NAME:$TAG
-                        '
-                    '''
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@${EC2_IP} "
+                            docker pull ${IMAGE_NAME}:${TAG} &&
+                            docker stop ${CONTAINER_NAME} || true &&
+                            docker rm ${CONTAINER_NAME} || true &&
+                            docker run -d -p ${PORT}:${PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}:${TAG}
+                        "
+                    """
                 }
             }
         }
